@@ -29,6 +29,8 @@ class FuzzyCMeans:
         # Initial empty centroid matrix
         self.centroids = np.zeros(shape=(self.n_clusters, self.data.shape[1]))
 
+        fig = plt.figure()
+
         iteration_count = 1
 
         while True:
@@ -63,6 +65,12 @@ class FuzzyCMeans:
             # Else, update centroids matrix
             self.centroids = new_centroids.copy()
 
+            # Plot the data
+            plt.scatter(self.data[:,0], self.data[:,1], c='blue', marker='o')
+            plt.scatter(self.centroids[:,0], self.centroids[:,1], c='red', marker='+')
+            plt.pause(0.1)
+            plt.close()
+
 
 if __name__ == "__main__":
 
@@ -93,3 +101,8 @@ if __name__ == "__main__":
     centroids = fcm.centroids
 
     print(centroids)
+
+    # Plot the data
+    plt.scatter(X[:,0], X[:,1], c='blue', marker='o')
+    plt.scatter(centroids[:,0], centroids[:,1], c='red', marker='+')
+    plt.show()
