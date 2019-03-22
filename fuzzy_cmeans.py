@@ -4,6 +4,7 @@ Date: 22 Mar 2019
 Desc: Fuzzy c-means clustering
 """
 
+from sys import stdout
 import argparse
 import numpy as np
 from matplotlib import pyplot as plt
@@ -26,9 +27,16 @@ class FuzzyCMeans:
         fuzzy_matrix = fuzzy_matrix/fuzzy_matrix.sum(axis=1, keepdims=True)
 
         # Initial empty centroid matrix
-        self.centroids = np.emtpy(shape=(self.n_clusters, self.data.shape[1]))
+        self.centroids = np.zeros(shape=(self.n_clusters, self.data.shape[1]))
+
+        iteration_count = 1
 
         while True:
+
+            # Print iteration number for clarity of progress
+            stdout.write("\rIteration {}...".format(iteration_count))
+            stdout.flush()
+            iteration_count = iteration_count + 1
 
             # Compute fuzzy_matrix's each element powered to fuzziness
             fuzzy_matrix_powered = np.power(fuzzy_matrix, self.fuzziness)
@@ -47,6 +55,13 @@ class FuzzyCMeans:
             fuzzy_matrix = np.power(fuzzy_matrix, 2./(self.fuzziness-1))
 
             fuzzy_matrix = fuzzy_matrix/fuzzy_matrix.sum(axis=1, keepdims=True)
+
+            # If centroids don't change, convergence reached, stop
+            if (np.array_equal(self.centroids, new_centroids)):
+                break
+
+            # Else, update centroids matrix
+            self.centroids = new_centroids.copy()
 
 
 if __name__ == "__main__":
@@ -73,3 +88,8 @@ if __name__ == "__main__":
 
     # Fit the data X
     fcm.fit(X)
+
+    # Print centroids
+    centroids = fcm.centroids
+
+    print(centroids)
