@@ -11,13 +11,36 @@ from sklearn.datasets.samples_generator import make_blobs
 
 class FuzzyCMeans:
     def __init__(self, n_clusters=4, fuzziness=2):
+
         self.n_clusters = n_clusters
         self.fuzziness = fuzziness
 
-    def fit(X):
+    def fit(self, X):
+
         self.data = X
 
-        fuzzy_partition_matrix = np.empty(shape=(self.data.shape[0], self.n_clusters), dtype=float)
+        # Create fuzzy partition matrix with random values
+        fuzzy_matrix = np.random.randint(low=100, high=200, size=(self.data.shape[0], self.n_clusters))
+
+        # Modify fuzzy partition matrix such that each row sums to 1
+        fuzzy_matrix = fuzzy_matrix/fuzzy_matrix.sum(axis=1, keepdims=True)
+
+        # Initial empty centroid matrix
+        self.centroids = np.emtpy(shape=(self.n_clusters, self.data.shape[1]))
+
+        while True:
+
+            # Compute fuzzy_matrix's each element powered to fuzziness
+            fuzzy_matrix_powered = np.power(fuzzy_matrix, self.fuzziness)
+
+            # Divide each row of fuzzy_matrix_powered by the sum of the row
+            fuzzy_matrix_powered = fuzzy_matrix_powered/fuzzy_matrix_powered.sum(axis=1, keepdims=True)
+
+            # Compute centroids (C = (W^p/sum(W^p))T * X)
+            self.centroids = np.matmul(fuzzy_matrix_powered.T, self.data)
+
+            # Update the fuzzy_matrix
+            
 
 
 if __name__ == "__main__":
