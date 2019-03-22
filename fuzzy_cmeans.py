@@ -37,10 +37,16 @@ class FuzzyCMeans:
             fuzzy_matrix_powered = fuzzy_matrix_powered/fuzzy_matrix_powered.sum(axis=1, keepdims=True)
 
             # Compute centroids (C = (W^p/sum(W^p))T * X)
-            self.centroids = np.matmul(fuzzy_matrix_powered.T, self.data)
+            new_centroids = np.matmul(fuzzy_matrix_powered.T, self.data)
 
             # Update the fuzzy_matrix
-            
+            for i in range(fuzzy_matrix.shape[0]):
+                for j in range(fuzzy_matrix.shape[1]):
+                    fuzzy_matrix[i][j] = 1./np.linalg.norm(self.data[i]-self.centroids[j])
+
+            fuzzy_matrix = np.power(fuzzy_matrix, 2./(self.fuzziness-1))
+
+            fuzzy_matrix = fuzzy_matrix/fuzzy_matrix.sum(axis=1, keepdims=True)
 
 
 if __name__ == "__main__":
@@ -51,6 +57,11 @@ if __name__ == "__main__":
     parser.add_argument('--fuzziness', '-m', type=int, default=2, help='Fuzziness parameter')
     parser.add_argument('--n_samples', '-n', type=int, default=500, help='No. of samples to generate')
     args = parser.parse_args()
+
+    # Special case check for fuzziness = 1
+    if (args.fuzziness == 1):
+        print('Fuzziness value of 1 leads to divide by zero')
+        exit(1)
 
     # Generate data around 4 centers using make_blobs
     centers = [[-2,-2], [2,2], [2,-2], [-2,2]]
