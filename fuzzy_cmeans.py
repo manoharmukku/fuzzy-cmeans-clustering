@@ -27,16 +27,15 @@ class FuzzyCMeans:
         # Modify fuzzy partition matrix such that each row sums to 1
         self.fuzzy_matrix = self.fuzzy_matrix/self.fuzzy_matrix.sum(axis=1, keepdims=True)
 
-        # Initial empty centroid matrix
-        self.centroids = np.zeros(shape=(self.n_clusters, self.data.shape[1]))
+        # Initial random centroid matrix
+        self.centroids = np.random.randint(low=-4, high=4, size=(self.n_clusters, self.data.shape[1]))
 
+        # Calculate SSE error
         fuzzy_matrix_powered = np.power(self.fuzzy_matrix, self.fuzziness)
         self.sse_error = 0
         for j in range(self.n_clusters):
             for i in range(self.data.shape[0]):
                 self.sse_error += (fuzzy_matrix_powered[i][j] * np.power(np.linalg.norm(self.data[i]-self.centroids[j]), 2))
-
-        print (self.sse_error)
 
         fig = plt.figure()
 
@@ -60,20 +59,6 @@ class FuzzyCMeans:
             # Compute new centroids (C = (W^p/sum(W^p))T * X)
             new_centroids = np.matmul(fuzzy_matrix_powered.T, self.data)
 
-            # new_centroids = np.zeros(shape=(self.n_clusters, self.data.shape[1]))
-            # for j in range(self.n_clusters):
-
-            #     fuzzy_matrix_powered_col_sum = 0.
-
-            #     for i in range(self.data.shape[0]):
-
-            #         fuzzy_matrix_powered_col_sum += fuzzy_matrix_powered[i][j]
-
-            #         for k in range(self.data.shape[1]):
-            #             new_centroids[j][k] += fuzzy_matrix_powered[i][j] * self.data[i][k]
-
-            #     for k in range(self.data.shape[1]):
-            #         new_centroids[j][k] /= fuzzy_matrix_powered_col_sum
 
             ##################### UPDATE FUZZY MATRIX #####################
 
@@ -86,17 +71,7 @@ class FuzzyCMeans:
             new_fuzzy_matrix = np.power(new_fuzzy_matrix, 2./(self.fuzziness-1))
 
             new_fuzzy_matrix = new_fuzzy_matrix/new_fuzzy_matrix.sum(axis=1, keepdims=True)
-            
-            # # If centroids don't change, convergence reached, stop
-            # if (np.array_equal(self.centroids, new_centroids)):
-            #     break
 
-            # # Change in fuzzy matrix
-            # fuzzy_matrix_change = np.absolute(self.fuzzy_matrix - new_fuzzy_matrix)
-
-            # # If change in fuzzy matrix is < epsilon, then break
-            # if (np.any(np.less(fuzzy_matrix_change, self.epsilon))):
-            #     break
 
             #################### CALCULATE SSE ##################
 
