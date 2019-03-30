@@ -32,10 +32,10 @@ class FuzzyCMeans:
 
         # Calculate SSE error
         fuzzy_matrix_powered = np.power(self.fuzzy_matrix, self.fuzziness)
-        self.sse_error = 0
+        self.sse_error = 0.
         for j in range(self.n_clusters):
             for i in range(self.data.shape[0]):
-                self.sse_error += (fuzzy_matrix_powered[i][j] * np.power(np.linalg.norm(self.data[i]-self.centroids[j]), 2))
+                self.sse_error += fuzzy_matrix_powered[i][j] * np.power(np.linalg.norm(self.data[i]-self.centroids[j]), 2)
 
         fig = plt.figure()
 
@@ -53,7 +53,7 @@ class FuzzyCMeans:
             # Compute fuzzy_matrix's each element powered to fuzziness
             fuzzy_matrix_powered = np.power(self.fuzzy_matrix, self.fuzziness)
 
-            # Divide each row of fuzzy_matrix_powered by the sum of the row
+            # Divide each column of fuzzy_matrix_powered by the sum of the column
             fuzzy_matrix_powered = fuzzy_matrix_powered/fuzzy_matrix_powered.sum(axis=0, keepdims=True)
 
             # Compute new centroids (C = (W^p/sum(W^p))T * X)
@@ -80,7 +80,7 @@ class FuzzyCMeans:
             new_sse_error = 0.
             for j in range(self.n_clusters):
                 for i in range(self.data.shape[0]):
-                    new_sse_error += (new_fuzzy_matrix_powered[i][j] * np.power(np.linalg.norm(self.data[i]-new_centroids[j]), 2))
+                    new_sse_error += new_fuzzy_matrix_powered[i][j] * np.power(np.linalg.norm(self.data[i]-new_centroids[j]), 2)
 
             # If change in SSE error is < epsilon, break
             if (self.sse_error - new_sse_error) < self.epsilon:
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     # Print centroids
     centroids = fcm.centroids
-
+    print('\nFinal Centroids = ')
     print(centroids)
 
     # Plot the data
