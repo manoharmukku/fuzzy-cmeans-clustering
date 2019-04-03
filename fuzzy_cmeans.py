@@ -21,7 +21,7 @@ class FuzzyCMeans:
 
         self.data = X
 
-        # Create fuzzy partition matrix with random values
+        # Create fuzzy partition matrix with random values from uniform distribution
         self.fuzzy_matrix = np.random.randint(low=100, high=200, size=(self.data.shape[0], self.n_clusters))
 
         # Modify fuzzy partition matrix such that each row sums to 1
@@ -91,8 +91,26 @@ class FuzzyCMeans:
             self.fuzzy_matrix = new_fuzzy_matrix.copy()
             self.sse_error = new_sse_error
 
+            ######################## PLOT THE DATA ################
+
+            max_membership_indices = np.argmax(self.fuzzy_matrix, axis=1)
+
+            # Plot the data with different colors based on the cluster
+            for i in range(self.fuzzy_matrix.shape[0]):
+
+                max_membership_idx = max_membership_indices[i]
+
+                if (max_membership_idx == 0):
+                    plt.scatter(self.data[i][0], self.data[i][1], c='blue', marker='o')
+                elif (max_membership_idx == 1):
+                    plt.scatter(self.data[i][0], self.data[i][1], c='green', marker='o')
+                elif (max_membership_idx == 2):
+                    plt.scatter(self.data[i][0], self.data[i][1], c='orange', marker='o')
+                elif (max_membership_idx == 3):
+                    plt.scatter(self.data[i][0], self.data[i][1], c='cyan', marker='o')
+
             # Plot the data
-            plt.scatter(self.data[:,0], self.data[:,1], c='blue', marker='o')
+            #plt.scatter(self.data[:,0], self.data[:,1], c='blue', marker='o')
             plt.scatter(self.centroids[:,0], self.centroids[:,1], c='red', marker='+')
             plt.pause(1)
             plt.close()
@@ -130,6 +148,22 @@ if __name__ == "__main__":
     print(centroids)
 
     # Plot the data
-    plt.scatter(X[:,0], X[:,1], c='blue', marker='o')
+
+    max_membership_indices = np.argmax(fcm.fuzzy_matrix, axis=1)
+
+    # Plot the data with different colors based on the cluster
+    for i in range(fcm.fuzzy_matrix.shape[0]):
+        
+        max_membership_idx = max_membership_indices[i]
+
+        if (max_membership_idx == 0):
+            plt.scatter(X[i][0], X[i][1], c='blue', marker='o')
+        elif (max_membership_idx == 1):
+            plt.scatter(X[i][0], X[i][1], c='green', marker='o')
+        elif (max_membership_idx == 2):
+            plt.scatter(X[i][0], X[i][1], c='orange', marker='o')
+        elif (max_membership_idx == 3):
+            plt.scatter(X[i][0], X[i][1], c='cyan', marker='o')
+            
     plt.scatter(centroids[:,0], centroids[:,1], c='red', marker='+')
     plt.show()
